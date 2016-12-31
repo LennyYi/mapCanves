@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./common/echarts/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="./common/echarts/esl.js" ></script>
+<script type="text/javascript">
+var option1;
+var option2;
+var chart1;
+var echart1;
+		require.config({
+			packages:[
+				{  
+				    name: 'zrender',  
+				    location: './common/zrender2/src', // zrender与echarts在同一级目录  
+				    main: 'zrender'  
+				},  
+				{  
+				    name: 'echarts',  
+				    location: './common/echarts-2.2.7/src',  
+				    main: 'echarts'  
+				}      
+			]
+		});
+		
+		// 按需加载(需要用什么图标就引入包，如柱状图：'echarts/chart/bar',)
+		require(
+			[
+			 	'echarts', 
+			 	'echarts/config', 
+			 	'echarts/chart/bar',
+			 	'echarts/chart/pie',
+			 	'echarts/chart/map'
+			],
+			function (ec) {
+				chart1=document.getElementById('main');
+				echart1 = ec.init(chart1);
+				var chart2  = document.getElementById('chart2');
+				var echart2 = ec.init(chart2);
+				var categories = [];
+				var values = [];
+				var orgs=[];
+				var orgVal=[];
+				var mapData=[];
+				var pieData=[];
+				var nameMap={};
+				 option1 = {
+						backgroundColor: 'rgba(187,203,243,0.5)',
+					    tooltip : {
+					    	backgroundColor:'rgba(187,203,243,0.5)',
+					    	borderWidth:0,
+					    	borderColor:'#000',
+					    	transitionDuration:0.5,
+					        trigger: 'item',
+					        formatter :function (params, ticket, callback) {
+					            $.get('map?country=' + params.name, function (content) {
+					                callback(ticket, "<div style='border:0px;height:250px;width:300px;background-color:rgba(187,203,243,0.5)'></div>");
+					            });
+					            return 'Loading';
+					        }
+					    },
+					    legend: {
+					        orient : 'vertical',
+					        x : 'left',
+					        data:[{
+						                name:'normal',
+						                textStyle:{
+						                    fontSize:12,
+						                    fontWeight:'bolder',
+						                    color:'#7CFC00'
+						                },
+						                icon:'stack'
+						            },
+						            {
+						                name:'risk',
+						                textStyle:{
+						                    fontSize:12,
+						                    fontWeight:'bolder',
+						                    color:'#EEEE00'
+						                },
+						                icon:'stack'
+						            },
+						            {
+						                name:'overdue',
+						                textStyle:{
+						                    fontSize:12,
+						                    fontWeight:'bolder',
+						                    color:'#FF0000'
+						                },
+						                icon:'stack'
+						            }]
+					    },
+					    dataRange: {
+					        x: 'left',
+					        y: 'bottom',
+					        splitList: [
+					            {start:1, end: 1, label: 'normal',color: 'green'},
+					            {start: 0, end: 0, label: 'risk', color: 'yellow'},
+					            {start: -1, end: -1, label: 'overdue', color: 'red'}
+					        ],
+					        color:['green','yellow','red']  
+					    },
+					    series : [
+					        {
+					            name: '世界地图',
+					            type: 'map',
+					            mapType: 'world',
+					            roam: true,
+					            selectedMode : 'single',
+					            itemStyle:{
+					                normal:{label:{show:false}},
+					                emphasis:{label:{show:true}}
+					            },
+					            data:mapData,
+					            // 自定义名称
+					            nameMap : nameMap
+					        },
+					        {
+					            name:'该国财务概况',
+					            type:'pie',
+					            roseType : 'area',
+					            tooltip: {
+					                trigger: 'item',
+					                formatter: "{a} <br/>{b} : {c} ({d}%)"
+					            },
+					            center: [document.getElementById('main').offsetWidth - 1200, 225],
+					            radius: [20, 60],
+					            data:pieData // select data from table where country_name -以国家为条件实时读取
+					        },
+					    ],
+					    animation: false,
+					    color:['green','yellow','red'] 
+					};
+				 option2 = {
+						backgroundColor: 'rgba(223,230,249,0.5)',
+					    title : {
+					        text: 'World Population (2010)',
+					        subtext: 'from United Nations, Total population, both sexes combined, as of 1 July (thousands)',
+					        x:'center',
+					        y:'top'
+					    },
+					    tooltip : {
+					        trigger: 'item',
+					        backgroundColor:'rgba(187,203,243,0.5)',
+					    	borderWidth:0,
+					    	borderColor:'#000',
+					    	transitionDuration:0.8,
+					        formatter : function (params,ticket,callback) {
+					        	 $.get('map?country=' + params.name, function (content) {
+					        			var total=0;
+							        	var percent;
+							        	var risk=0;
+							        	var normal=0;
+							        	var overdue=0;
+							        	var pieData = content.pieData;
+							           var str = "<div style='border:0px;height:250px;width:300px;background-color:rgba(187,203,243,0.5)'>"
+							           +"<div style='float:left; font-style:italic'>";
+							           for(var i = 0; i<pieData.length; i++){
+							        	   if(pieData[i].name=='normal'){
+							        		   risk = parseInt(pieData[i].value,10);
+							        	   }
+							        	   if(pieData[i].name=='risk'){
+							        		   normal = parseInt(pieData[i].value,10);
+							        	   }
+							        	   if(pieData[i].name=='overdue'){
+							        		   overdue = parseInt(pieData[i].value,10);
+							        	   }
+							        	   total += parseInt(pieData[i].value,10);
+							           }
+							           
+							           str +=(risk/total * 100).toFixed(1)+" %<br/>"+(normal/total * 100).toFixed(1)+"%<br/>"+(overdue/total * 100).toFixed(1)+" %";
+							           str +="</div><div><ul>";
+							           for(var i = 0;i<pieData.length; i++){
+							        	   str +="<li>"+pieData[i].name+" : "+pieData[i].value+"</li>";
+							           }
+							           str = str+"</ul></div></div>"
+					                 callback(ticket, str);
+					             });
+					             return 'Loading';
+					        }
+					    },
+					    toolbox: {
+					        show : true,
+					        orient : 'vertical',
+					        x: 'right',
+					        y: 'center',
+					        feature : {
+					            mark : {show: true},
+					            dataView : {show: true, readOnly: false},
+					            restore : {show: true},
+					            saveAsImage : {show: true}
+					        }
+					    },
+					    legend: {
+					        orient : 'vertical',
+					        x : 'left',
+					        data:[{
+						                name:'normal',
+						                textStyle:{
+						                    fontSize:12,
+						                    fontWeight:'bolder',
+						                    color:'#7CFC00'
+						                },
+						                icon:'stack'
+						            },
+						            {
+						                name:'risk',
+						                textStyle:{
+						                    fontSize:12,
+						                    fontWeight:'bolder',
+						                    color:'#EEEE00'
+						                },
+						                icon:'stack'
+						            },
+						            {
+						                name:'overdue',
+						                textStyle:{
+						                    fontSize:12,
+						                    fontWeight:'bolder',
+						                    color:'#FF0000'
+						                },
+						                icon:'stack'
+						            }]
+					    },
+					    dataRange: {
+					        x: 'left',
+					        y: 'bottom',
+					        splitList: [
+					            {start:1, end: 1, label: 'normal',color: 'green'},
+					            {start: 0, end: 0, label: 'risk', color: 'yellow'},
+					            {start: -1, end: -1, label: 'overdue', color: 'red'}
+					        ],
+					        color:['green','yellow','red']  
+					    },
+					    series : [
+					        {
+					            name: 'World Population (2010)',
+					            type: 'map',
+					            mapType: 'world',
+					            roam: true,
+					            mapLocation: {
+					                y : 60
+					            },
+					            itemStyle:{
+					                emphasis:{label:{show:true}}
+					            },
+					            showLegendSymbol:true,
+					            markPoint:{
+					            	clickable:true,
+					            	symbol:'emptyCircle',
+					            	data:mapData
+					            },
+					            data:mapData
+					        },
+					        {
+					            name:'该国财务概况',
+					            type:'pie',
+					            roseType : 'area',
+					            tooltip: {
+					                trigger: 'item',
+					                formatter: "{a} <br/>{b} : {c} ({d}%)"
+					            },
+					            center: [document.getElementById('main').offsetWidth - 1200, 225],
+					            radius: [20, 60],
+					            data:pieData
+					        }
+					    ],
+					    animation: false,
+					    color:['green','yellow','red']  
+					};
+				
+				/* 
+				加事件的两种方法
+				var ecConfig= require('echarts/config');  
+				chart1.on(ecConfig.EVENT.MAP_SELECTED, function (param){
+				   
+                          alert("a");
+						});
+				
+				chart1.on('mapSelected', function (param){
+					   alert("a");
+
+				}); */
+				
+				
+				echart1.setOption(option1);
+				echart2.setOption(option2);
+				 var ecConfig = require('echarts/config');  
+				 echart1.on(ecConfig.EVENT.MAP_SELECTED, function (param) {  
+				        var selected = param.selected;
+		                for (var p in selected) {
+		                    if (selected[p]) {
+		                    	//从这里开始掉用服务。或者先初始化重新渲染一个地图    点击跳转  第一种可以自定义map 那个国家的URL可以预先写在json数据中传过来，第二种 ajax 点击的时候再去数据库读取一次，或者从后台读取一次
+		                        alert(p);
+		                    }
+		                }
+				       
+				    }
+				 )  
+			}
+		);
+		
+		
+function drawMap(){
+	debugger;
+	/*
+	$.ajaxSettings.async = false;
+	// 加载数据
+	$.getJSON("map", function (json) {
+		console.log(json)
+		//mapData = json.mapData;
+		//pieData = json.pieData;
+		/*
+		categories = json.mapData;
+		values = json.values;
+		orgs=json.orgs;
+		orgVal=json.orgVal;
+		});
+	*/
+	 $.ajax({  
+         url : "map",//springmvc的controller的请求路径
+         type : "post",  
+         async : false, //同步执行  
+         data : {},  
+         dataType : "json", //返回数据形式为json  
+         success : function(data) {  
+             if (data) {  
+                 //请求成功将数据设置到相应的位置上
+                 option1.series[0].data = data.mapData;  
+                 option1.series[1].data = data.pieData;  
+                 echart1.setOption(option1);  
+             }  
+         },  
+         error : function(xmlHttpRequest,errorMsg,exceptionObject) {  
+             alert("requestError");  
+             alert('xmlHttpRequest>>>>>' + xmlHttpRequest + ' errorMsg>>>>>' + errorMsg + ' exceptionObject>>>>>' + exceptionObject);
+             chart1.hideLoading();  
+         }  
+     });  
+ } 
+ 
+
+	</script>
+</head>
+<body>
+    <div style="position: center"><label>search1</label><input id="search_map_1" type="text" /><input type="submit" value="Search" onclick="drawMap()"/></div>
+	<div id="main" style="height:500px;">
+	</div><br/><hr>
+	<div style="position: center"><label >search2</label><input id="search_map_2" type="text" /><input type="submit" value="Search" onclick="drawMap()"/></div>
+	<div id="chart2" style="height:500px;">
+	</div>
+</body>
+</html>
