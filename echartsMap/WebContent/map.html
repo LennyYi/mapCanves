@@ -6,8 +6,37 @@
 <script type="text/javascript" src="./common/echarts/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="./common/echarts/esl.js" ></script>
 <script type="text/javascript" src="./common/map.js"></script>
+<script>
+var w;
+
+function startDramMap() {
+	try{
+		if(typeof(Worker) !== "undefined") {
+	        if(typeof(w) == "undefined") {
+	            w = new Worker("./common/map.js");
+	        }
+	      /*   w.onmessage = function(event) {
+	            document.getElementById("result").innerHTML = event.data;
+	        }; */
+	    } else {
+	        document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+	    }
+	}catch(e){
+		
+	}
+    
+}
+
+function stopWorker() 
+{ 
+    w.terminate();
+    w = undefined;
+}
+</script>
 </head>
 <body>
+
+
     <div style="position: center"><label>search1</label><input id="search_map_1" type="text" /><input type="submit" value="Search" onclick="drawMap()"/></div>
 	<div id="main" style="height:500px;">
 	</div><br/><hr>
