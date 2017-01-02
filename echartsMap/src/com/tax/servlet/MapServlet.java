@@ -49,6 +49,8 @@ public class MapServlet extends  HttpServlet{
 		      
 		      pie.put("name", "overdue");
 		      pie.put("value", "1");
+		     // selected:true
+		   //   pie.put("selected", true);
 		      pies.add(pie);
 		      
 		      pie = new JSONObject(); 
@@ -64,6 +66,7 @@ public class MapServlet extends  HttpServlet{
 		     
 		      data.put("pieData", pies);
 		      data.put("legendArr", new String[]{"overdue","risk","normal"});
+		      data.put("url", "./china.html");
 		      pw.write(data.toString());
 		      System.out.println(data.toString());
 		      pw.flush();
