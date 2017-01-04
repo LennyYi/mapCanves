@@ -443,8 +443,7 @@ var echart1;
 				 )  
 			}
 		);
-		
-		
+
  drawMap = function(){
 	 $.ajax({  
          url : "map",//springmvc的controller的请求路径

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./common/echarts/jquery-1.7.2.min.js"></script>
+</head>
+<script>
+$(function() {
+	  var $input = $('#input'),
+	    $btn = $('#btn'),
+	    $result = $('#result'),
+	    worker = new Worker('fb.js'),
+	    timeKey = function(val) {
+	      return 'fibonacci(' + val + ')';
+	    };
+
+	  worker.onmessage = function(event) {
+	    console.timeEnd(timeKey(event.data.input));
+	    $result.val(event.data.result);
+	    alert(event.data.result);
+	  };
+
+	  $btn.on('click', function() {
+	    var val = parseInt($input.val(), 10);
+	    if (val) {
+	      console.time(timeKey(val));
+	      $result.val('?')
+	      worker.postMessage(val);
+	    }
+	  });
+	});
+</script>
+<body>
+<label>fibonacci</label><input id="input" type="text"/> <input id="btn" value=")=" type="button" /> <input type="text" id="result"/>
+</body>
+</html>
