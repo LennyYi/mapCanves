@@ -1,5 +1,5 @@
 //定义方法名称供document中的onclick事件调用
-var drawMap;
+;var drawMap;
 //块级作用域，这么可以避免定义较多的全局变量
 (function(){
 var option1;
@@ -32,49 +32,42 @@ var echart1;
 			function (ec) {
 				chart1=document.getElementById('main');
 				echart1 = ec.init(chart1);
-				var chart2  = document.getElementById('chart2');
-				var echart2 = ec.init(chart2);
 				var mapData=[];
 				var pieData=[];
+				var x;
+				var y;
+				var pos = [x,y];
 				 option1 = {
 						backgroundColor: 'rgba(187,203,243,0.5)',
 					    tooltip : {
-					    	position:function([x, y]) {return [x+100,y+100]},
+					    	enterable:false,
+					    	transitionDuration:10,
+					    	position:function(pos) {return [pos[0]+100,pos[1]+100]},
 					    	backgroundColor:'rgba(187,203,243,0.5)',
-					    	borderWidth:0,
-					    	borderColor:'#000',
+					    	borderWidth:2,
+					    	borderColor:'#fff',
 					    	showDelay:100,
 					    	enterable:false,
-					    	transitionDuration:0,
+					    	transitionDuration:1000,
 					        trigger: 'item',
+					        borderRadius:10,
 					        formatter :function (params, ticket, callback) {
 					            $.get(encodeURI('map?country=' + params.name), function (content) {
-					            	 callback(ticket, "<div id='chart3' style='border:0px;height:250px;width:500px;background-color:rgba(187,203,243,0.5)'></div>");
+					            	 callback(ticket, "<div id='chart3' style='border:0px;height:250px;width:400px;background-color:rgba(187,203,243,0.5)'></div>");
 					                 chart3=document.getElementById('chart3');
 					                 echart3 = ec.init(chart3);
 					                 var option3 = {
-					            			    tooltip : {
-					            			        trigger: 'item',
-					            			        formatter: "{a} <br/>{b} : {c} ({d}%)"
-					            			    },
-					            			    itemStyle : {
-					            			        normal : {
-					            			            label : {
-					            			                show : true,
-					            			                position : 'center',
-					            			                formatter: "{a} <br/>{b} : {c} ({d}%)",
-					            			                textStyle: {
-					            			                    baseline : 'bottom'
-					            			                }
-					            			            },
-					            			            labelLine : {
-					            			                show : true
-					            			            }
-					            			        }
-					            			    },
 					            			    legend: {
-					            			        orient : 'vertical',
-					            			        x : 'right',
+					            			    	itemGap:40,
+					            			    	itemWidth:10,
+					            			    	itemHeight:8,
+					            			    	selectedMode:false,
+					            			    	formatter:function(name){
+					            			    		return name;
+					            			    	},
+					            			        orient : 'horizontal',
+					            			        x : 'center',
+					            			        y : 'bottom',
 					            			        data:[{
 					            				                name:'normal',
 					            				                textStyle:{
@@ -105,48 +98,22 @@ var echart1;
 					            			    },
 					            			    calculable : true,
 					            			    series : [
-					            			              {
-					            			                  name:'各国财务状况',
-					            			                  type:'pie',
-					            			                  selectedMode: 'single',
-					            			                  radius : [0, 40],
-					            			                  
-					            			                  itemStyle : {
-					            			                      normal : {
-					            			                          label : {
-					            			                              position : 'inner',
-					            			                            	  textStyle:{
-					            			                            		  color : 'rgba(0,0,0,0.5)',
-					            			                                      align : 'center',
-					            			                                      baseline : 'middle',
-					            			                                      fontFamily : '微软雅黑',
-					            			                                      fontSize : 1,
-					            			                                      fontWeight : 'bolder'
-										            			                }
-					            			                          },
-					            			                          labelLine : {
-					            			                              show : false
-					            			                          }
-					            			                      }
-					            			                  },
-					            			                  data:content.pieData
-					            			              },
 					            			        {
 					            			            name:'各国财务状况',
 					            			            type:'pie',
-					            			            radius : ['50%', '70%'],
+					            			            radius : ['20%', '40%'],
 					            			            itemStyle : {
 					            			                normal : {
 					            			                    label : {
 					            			                    	   show : true,
 								            			                position : 'outer',
-								            			                formatter: "{c} ({d}%)",
+								            			                formatter: "{b}:{c} ({d}%)",
 								            			                textStyle: {
 								            			                    baseline : 'bottom'
 								            			                },
 								            			                textStyle:{
 								            			                	color:'#fffff',
-								            			                	fontSize:2
+								            			                	fontSize:12
 								            			                }
 					            			                    },
 					            			                    labelLine : {
@@ -155,7 +122,7 @@ var echart1;
 					            			                },
 					            			                emphasis : {
 					            			                    label : {
-					            			                        show : true,
+					            			                        show : false,
 					            			                        position : 'inner',
 					            			                        textStyle : {
 					            			                            fontSize : '30',
@@ -175,37 +142,6 @@ var echart1;
 					            return "";
 					        }
 					    },
-					    legend: {
-					        orient : 'vertical',
-					        x : 'left',
-					        data:[{
-						                name:'normal',
-						                textStyle:{
-						                    fontSize:12,
-						                    fontWeight:'bolder',
-						                    color:'#7CFC00'
-						                },
-						                icon:'stack'
-						            },
-						            {
-						                name:'risk',
-						                textStyle:{
-						                    fontSize:12,
-						                    fontWeight:'bolder',
-						                    color:'#EEEE00'
-						                },
-						                icon:'stack'
-						            },
-						            {
-						                name:'overdue',
-						                textStyle:{
-						                    fontSize:12,
-						                    fontWeight:'bolder',
-						                    color:'#FF0000'
-						                },
-						                icon:'stack'
-						            }]
-					    },
 					    dataRange: {
 					        x: 'left',
 					        y: 'bottom',
@@ -224,25 +160,23 @@ var echart1;
 					            roam: true,
 					            selectedMode : 'single',
 					            itemStyle:{
-					                normal:{label:{show:false}},
-					                emphasis:{label:{show:true}}
-					            },
-					            data:mapData,
-					            // 自定义名称
-					           // nameMap : nameMap
+					                normal:{
+					                	  borderWidth:2,
+					                      borderColor:'white',
+					                      //color: 'gray',
+					                	label:{
+					                		  show:false
+					                		},
+					                		 labelLine : {
+	            			                        show : true
+	            			                    }
 					        },
-					        {
-					            name:'该国财务概况',
-					            type:'pie',
-					            roseType : 'area',
-					            tooltip: {
-					                trigger: 'item',
-					                formatter: "{a} <br/>{b} : {c} ({d}%)"
+					                emphasis:{
+					                	label:{show:true}
+					                	}
 					            },
-					            center: [document.getElementById('main').offsetWidth - 1200, 225],
-					            radius: [20, 60],
-					            data:pieData // select data from table where country_name -以国家为条件实时读取
-					        },
+					            data:mapData
+					        }
 					    ],
 					    animation: false,
 					    color:['green','yellow','red'] 
@@ -261,12 +195,133 @@ var echart1;
 					    	borderWidth:0,
 					    	borderColor:'#000',
 					    	transitionDuration:0.8,
-					        formatter : function (params,ticket,callback) {
-					        	 $.get('map?country=' + params.name,function(content) {
-					        		console.log(content)
-					        	 });
-					             return 'Loading';
-					        }
+					    	 formatter :function (params, ticket, callback) {
+						            $.get(encodeURI('map?country=' + params.name), function (content) {
+						            	 callback(ticket, "<div id='chart3' style='border:0px;height:250px;width:500px;background-color:rgba(187,203,243,0.5)'></div>");
+						                 chart3=document.getElementById('chart3');
+						                 echart3 = ec.init(chart3);
+						                 var option3 = {
+						            			    tooltip : {
+						            			        trigger: 'item',
+						            			        formatter: "{a} <br/>{b} : {c} ({d}%)"
+						            			    },
+						            			    itemStyle : {
+						            			        normal : {
+						            			            label : {
+						            			                show : true,
+						            			                position : 'center',
+						            			                formatter: "{a} <br/>{b} : {c} ({d}%)",
+						            			                textStyle: {
+						            			                    baseline : 'bottom'
+						            			                }
+						            			            },
+						            			            labelLine : {
+						            			                show : true
+						            			            }
+						            			        }
+						            			    },
+						            			    legend: {
+						            			        orient : 'vertical',
+						            			        x : 'right',
+						            			        data:[{
+						            				                name:'normal',
+						            				                textStyle:{
+						            				                    fontSize:12,
+						            				                    fontWeight:'bolder',
+						            				                    color:'#fffff'
+						            				                },
+						            				                icon:'stack'
+						            				            },
+						            				            {
+						            				                name:'risk',
+						            				                textStyle:{
+						            				                    fontSize:12,
+						            				                    fontWeight:'bolder',
+						            				                    color:'#fffff'
+						            				                },
+						            				                icon:'stack'
+						            				            },
+						            				            {
+						            				                name:'overdue',
+						            				                textStyle:{
+						            				                    fontSize:12,
+						            				                    fontWeight:'bolder',
+						            				                    color:'#fffff'
+						            				                },
+						            				                icon:'stack'
+						            				            }]
+						            			    },
+						            			    calculable : true,
+						            			    series : [
+						            			              {
+						            			                  name:'各国财务状况',
+						            			                  type:'pie',
+						            			                  selectedMode: 'single',
+						            			                  radius : [0, 40],
+						            			                  
+						            			                  itemStyle : {
+						            			                      normal : {
+						            			                          label : {
+						            			                              position : 'inner',
+						            			                            	  textStyle:{
+						            			                            		  color : 'rgba(0,0,0,0.5)',
+						            			                                      align : 'center',
+						            			                                      baseline : 'middle',
+						            			                                      fontFamily : '微软雅黑',
+						            			                                      fontSize : 1,
+						            			                                      fontWeight : 'bolder'
+											            			                }
+						            			                          },
+						            			                          labelLine : {
+						            			                              show : false
+						            			                          }
+						            			                      }
+						            			                  },
+						            			                  data:content.pieData
+						            			              },
+						            			        {
+						            			            name:'各国财务状况',
+						            			            type:'pie',
+						            			            radius : ['50%', '70%'],
+						            			            itemStyle : {
+						            			                normal : {
+						            			                    label : {
+						            			                    	   show : true,
+									            			                position : 'outer',
+									            			                formatter: "{c} ({d}%)",
+									            			                textStyle: {
+									            			                    baseline : 'bottom'
+									            			                },
+									            			                textStyle:{
+									            			                	color:'#fffff',
+									            			                	fontSize:2
+									            			                }
+						            			                    },
+						            			                    labelLine : {
+						            			                        show : true
+						            			                    }
+						            			                },
+						            			                emphasis : {
+						            			                    label : {
+						            			                        show : true,
+						            			                        position : 'inner',
+						            			                        textStyle : {
+						            			                            fontSize : '30',
+						            			                            fontWeight : 'bold'
+						            			                        }
+						            			                    }
+						            			                }
+						            			            },
+						            			            data:content.pieData
+						            			        }
+						            			    ],
+						            			    animation: false,
+						            			    color:['green','yellow','red']  
+						            			};
+						                echart3.setOption(option3);
+						            }); 
+						            return "";
+						        }
 					    },
 					    toolbox: {
 					        show : true,
@@ -358,26 +413,7 @@ var echart1;
 					    color:['green','yellow','red']  
 					};
 				
-				 
-				
-						                    
-				/* 
-				加事件的两种方法
-				var ecConfig= require('echarts/config');  
-				chart1.on(ecConfig.EVENT.MAP_SELECTED, function (param){
-				   
-                          alert("a");
-						});
-				
-				chart1.on('mapSelected', function (param){
-					   alert("a");
-
-				}); */
-				
-				
 				echart1.setOption(option1);
-				echart2.setOption(option2);
-				//echart3.setOption(option3);
 				 var ecConfig = require('echarts/config');  
 				 echart1.on(ecConfig.EVENT.MAP_SELECTED, function (param) {  
 				        var selected = param.selected;
@@ -385,8 +421,8 @@ var echart1;
 		                    if (selected[p]) {//注意判断
 		                    	//读取后台URI 需要通过ajax把这个值传入到servlet 或者  专门处理点击跳转的sevice(action)
 		                    	 $.ajax({  
-		                             url : "map",//springmvc的controller的请求路径
-		                             type : "post",  
+		                             url : "/map",//springmvc的controller的请求路径
+		                             type : "GET",  
 		                             async : true, //同步执行  
 		                             data : {"country":p},  //设置过滤参数，或者条件参数
 		                             dataType : "json", //返回数据形式为json  
@@ -397,7 +433,7 @@ var echart1;
 		                                 }  
 		                             },  
 		                             error : function(xmlHttpRequest,errorMsg,exceptionObject) {  
-		                                 chart1.hideLoading();  
+		                            	 echart1.hideLoading();  
 		                             }  
 		                         });  
 		                    }
@@ -410,24 +446,9 @@ var echart1;
 		
 		
  drawMap = function(){
-	debugger;
-	/*
-	$.ajaxSettings.async = false;
-	// 加载数据
-	$.getJSON("map", function (json) {
-		console.log(json)
-		//mapData = json.mapData;
-		//pieData = json.pieData;
-		/*
-		categories = json.mapData;
-		values = json.values;
-		orgs=json.orgs;
-		orgVal=json.orgVal;
-		});
-	*/
 	 $.ajax({  
          url : "map",//springmvc的controller的请求路径
-         type : "post",  
+         type : "GET",  
          async : true, //同步执行  
          data : {},  //设置过滤参数，或者条件参数
          dataType : "json", //返回数据形式为json  
@@ -435,92 +456,14 @@ var echart1;
              if (data) {  
                  //请求成功将数据设置到相应的位置上
                  option1.series[0].data = data.mapData;  
-                 option1.series[1].data = data.pieData;  
+                // option1.series[1].data = data.pieData;  
                  echart1.setOption(option1);  
              }  
          },  
          error : function(xmlHttpRequest,errorMsg,exceptionObject) {  
-             chart1.hideLoading();  
+             echart1.hideLoading();  
          }  
      });  
  } 
- 
-/*  function drawPie(data){
-	 callback(ticket, "<div id='chart3' style='border:0px;height:250px;width:300px;background-color:rgba(187,203,243,0.5)'></div>");
-     chart3=document.getElementById('chart3');
-     echart3 = ec.init(chart3);
-     var option3 = {
-			    tooltip : {
-			        trigger: 'item',
-			        formatter: "{a} <br/>{b} : {c} ({d}%)"
-			    },
-			    legend: {
-			        orient : 'vertical',
-			        x : 'right',
-			        data:[{
-				                name:'normal',
-				                textStyle:{
-				                    fontSize:12,
-				                    fontWeight:'bolder',
-				                    color:'#7CFC00'
-				                },
-				                icon:'stack'
-				            },
-				            {
-				                name:'risk',
-				                textStyle:{
-				                    fontSize:12,
-				                    fontWeight:'bolder',
-				                    color:'#EEEE00'
-				                },
-				                icon:'stack'
-				            },
-				            {
-				                name:'overdue',
-				                textStyle:{
-				                    fontSize:12,
-				                    fontWeight:'bolder',
-				                    color:'#FF0000'
-				                },
-				                icon:'stack'
-				            }]
-			    },
-			    calculable : true,
-			    series : [
-			        {
-			            name:'各国财务状况',
-			            type:'pie',
-			            radius : ['50%', '70%'],
-			            itemStyle : {
-			                normal : {
-			                    label : {
-			                        show : false
-			                    },
-			                    labelLine : {
-			                        show : false
-			                    }
-			                },
-			                emphasis : {
-			                    label : {
-			                        show : true,
-			                        position : 'center',
-			                        textStyle : {
-			                            fontSize : '30',
-			                            fontWeight : 'bold'
-			                        }
-			                    }
-			                }
-			            },
-			            data:data.pieData
-			        }
-			    ],
-			    animation: false,
-			    color:['green','yellow','red']  
-			};
-    echart3.setOption(option3);
-	 
- } */
 }
-
-
 )()
