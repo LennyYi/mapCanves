@@ -2,37 +2,36 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <script type="text/javascript" src="./common/echarts/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="./common/echarts/esl.js"></script> 
+<script type="text/javascript" src="./common/mapOnload.js"></script> 
 <title>Insert title here</title>
-<script type="text/javascript" src="./common/echarts/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="./common/echarts/esl.js" ></script>
-<script type="text/javascript" src="./common/map.js"></script>
 <script>
 //javascprt多线程示例
+/*
 (function(){
 	var worker;
 	function startDramMap() {
 		try{
 			if(typeof(Worker) !== "undefined") {
 		        if(typeof(w) == "undefined") {
-		        	importScripts("./common/echarts/jquery-1.7.2.min.js");
-		        	importScripts("./common/echarts/esl.js");
 		            w = new Worker("./common/map.js");
 		        }
-		        worker.onmessage = function(e) {
-		        };
-		        worker.onerror = function(e){
-                };
 		    } else {
+		    	
+		    	console.log("loading error");
 		       // document.getElementById("main").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 		    }
-		}catch(e){
+		}catch(err){
+			  console.log('main thread received err');
+		        console.log(err.message);
 			 //document.getElementById("main").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 		}
 	    
 	}
-	startDramMap();
+	//startDramMap();
 })()
-
+*/
 
 </script>
 </head>

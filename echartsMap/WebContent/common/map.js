@@ -53,7 +53,7 @@ var echart1;
 					        borderRadius:10,
 					        formatter :function (params, ticket, callback) {
 					            $.get(encodeURI('map?country=' + params.name), function (content) {
-					            	 callback(ticket, "<div id='chart3' style='border:0px;height:250px;width:400px;background-color:rgba(187,203,243,0.5)'></div>");
+					            	 callback(ticket, "<div id='chart3' style='border:0px;height:200px;width:400px;background-color:rgba(187,203,243,0.5)'></div>");
 					                 chart3=document.getElementById('chart3');
 					                 echart3 = ec.init(chart3);
 					                 var option3 = {
